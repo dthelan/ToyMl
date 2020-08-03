@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Titanic Survival prediction</title>
+</head>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous">
+
+<style>
+body {
+    position: absolute;
+    text-align: center;
+    background-color: #333333;
+    color: #ffffff;
+    left: 30%;
+    top: 25%;
+    width: 40%;
+}
+</style>
+
+<body>
+<h1>Titanic Survival Prediction</h1>
+
+<p class="lead">Upload a csv file to predict if passengers would have survived the Titanic disaster. </p>
+<br>
+<div class="custom-file mb-3">
+  <input type="file" class="custom-file-input" id="files" name="filename">
+  <label class="custom-file-label" for="files">Choose file</label>
+</div>
+
+<br>
+<br>
+
+<p>The expected column headings are <br><br>
+    <i>'PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+        'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'</i> </p>
+
+</body>
+</html>
+
+<script type="text/javascript">
+  document.getElementById('files').addEventListener('change', function() {
+    let file = this.files[0];
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('post', '/predict', true);
+    xhr.send(file);
+
+     xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            let blob = new Blob([this.response], {type: 'text/csv'})
+            let a = document.createElement("a")
+            a.style = "display: none";
+            document.body.appendChild(a)
+            let url = window.URL.createObjectURL(blob)
+            a.href = url
+            a.download = 'Predictions.csv'
+            a.click()
+            window.URL.revokeObjectURL(url)
+        } };
+  }
+  )
+
+</script>
