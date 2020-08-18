@@ -8,11 +8,11 @@ from process_data import process_training_data
 
 
 # The main function for building our model
-def build_model(Data, Model_Name):
 
+def build_model(data, model_name):
     # Lets do some feature engineering
     # As this is common to train and test we define it a separate file and import it
-    df_data_final = process_training_data(Data,'Train')
+    df_data_final = process_training_data(data, 'Train')
 
     # Define a train and test set ids
     df_train_ids = df_data_final['PassengerId'].sample(frac=0.8, random_state=0)
@@ -23,27 +23,27 @@ def build_model(Data, Model_Name):
     df_test = df_data_final[df_data_final['PassengerId'].isin(df_test_ids)].drop(['PassengerId'], axis=1)
 
     # Define target variable in train and test set
-    train_X, train_Y = df_train.drop(['Survived'], axis=1), df_train['Survived']
-    test_X, test_Y = df_test.drop(['Survived'], axis=1), df_test['Survived']
+    train_x, train_y = df_train.drop(['Survived'], axis=1), df_train['Survived']
+    test_x, test_y = df_test.drop(['Survived'], axis=1), df_test['Survived']
 
     # Define a Random Forest Model
-    RF = RandomForestClassifier(random_state=0)
+    rf = RandomForestClassifier(random_state=0)
 
     # Fit Random Forest
-    RF.fit(train_X, train_Y)
+    rf.fit(train_x, train_y)
 
     # Fit on Test Set
-    pred_Y = RF.predict(test_X)
+    pred_y = rf.predict(test_x)
 
     # Print Model AUC Score
-    print(roc_auc_score(test_Y, pred_Y))
+    print(roc_auc_score(test_y, pred_y))
 
     # Save Model
-    dump(RF, '../models/'+Model_Name)
+    dump(rf, '../models/' + model_name)
 
 
 if __name__ == "__main__":
-    #   Parse command line aruments
+    #   Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', help='Saved model name, should be .joblib')
     parser.add_argument('-t', help='Training data csv file')
@@ -60,7 +60,7 @@ if __name__ == "__main__":
         sys.exit()
 
     # Load the data
-    df_data_raw = pd.read_csv('../data/'+args.t)
+    df_data_raw = pd.read_csv('../data/' + args.t)
 
     # Check the training file has the correct column names
     if set(df_data_raw.columns) != {'PassengerId', 'Survived', 'Pclass',

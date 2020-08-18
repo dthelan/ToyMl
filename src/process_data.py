@@ -1,4 +1,4 @@
-def process_training_data(data,data_set):
+def process_training_data(data, data_set):
     # Lets do some feature engineering
     # Does name contain MR
     data['Name Contains MR'] = data['Name'].apply(lambda x: 'MR' in x.upper())

@@ -11,6 +11,7 @@ app = Flask(__name__)
 # Set Debug as True to enable quick dev
 app.config['DEBUG'] = True
 
+
 # Define an API end point
 # This is a test to show the page is working
 @app.route('/')
@@ -36,7 +37,7 @@ def prediction():
         df_data_raw = pd.read_csv(io.BytesIO(request.get_data()), encoding="latin1")
 
         # We need to format this DataFrame like our training set
-        df_data_final = process_training_data(df_data_raw,'Test')
+        df_data_final = process_training_data(df_data_raw, 'Test')
 
         # Use our model to predict new results
         model_results = RF.predict(df_data_final.drop(['PassengerId'], axis=1))
@@ -51,8 +52,8 @@ def prediction():
         df_outcomes = df_data_final[['PassengerId', 'Survived']]
 
         # Merge results onto original DataFrame and drop created features
-        df_final = df_data_raw.merge(df_outcomes, left_on=['PassengerId']
-                                     , right_on=['PassengerId'], how='inner'). \
+        df_final = df_data_raw.merge(df_outcomes, left_on=['PassengerId'],
+                                     right_on=['PassengerId'], how='inner'). \
             drop(['Name Contains MR', 'Valid Cabin'], axis=1)
 
         # Transpose and return the DataFrame
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         sys.exit()
 
     # Load are model
-    RF = load('../models/'+args.m)
+    RF = load('../models/' + args.m)
 
     # Run the Web App on http://localhost:port
     app.run(host='0.0.0.0', port=args.p)
