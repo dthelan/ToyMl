@@ -23,7 +23,7 @@ def index():
 
 # Create the Model Predict Endpoint
 # Use a command like
-# curl --data-binary "@test.csv" --request POST http://localhost:8001/predict
+# curl --data-binary "@test.csv" --request POST http://localhost:5000/predict
 @app.route('/predict', methods=['GET', 'POST'])
 def prediction():
     # Define different end point for different request types
