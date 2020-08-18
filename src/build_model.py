@@ -4,29 +4,15 @@ from sklearn.metrics import roc_auc_score
 from joblib import dump
 import argparse
 import sys
+from process_data import process_training_data
 
 
 # The main function for building our model
 def build_model(Data, Model_Name):
+
     # Lets do some feature engineering
-    # Does name contain MR
-    Data['Name Contains MR'] = Data['Name'].apply(lambda x: 'MR' in x.upper())
-    # Is there a valid ticket number
-    Data['Valid Cabin'] = ~Data['Cabin'].isna()
-
-    # Drop rows with missing values
-    df_data_final = Data[['PassengerId', 'Survived', 'Pclass', 'Sex', 'Age', 'SibSp',
-                          'Parch', 'Fare', 'Embarked', 'Name Contains MR',
-                          'Valid Cabin']].dropna()
-
-    # Data_encodings
-    # Could have used sklearn.preprocessing.LabelEncoder() but we want to reuse these
-    Data_dict = {'Sex': {'male': 0, 'female': 1},
-                 'Embarked': {'S': 0, 'C': 1, 'Q': 2}}
-
-    # Apply Data Encodings
-    df_data_final['Sex'] = df_data_final['Sex'].apply(lambda x: Data_dict['Sex'][x])
-    df_data_final['Embarked'] = df_data_final['Embarked'].apply(lambda x: Data_dict['Embarked'][x])
+    # As this is common to train and test we define it a separate file and import it
+    df_data_final = process_training_data(Data,'Train')
 
     # Define a train and test set ids
     df_train_ids = df_data_final['PassengerId'].sample(frac=0.8, random_state=0)

@@ -4,17 +4,12 @@ import pandas as pd
 import io
 import sys
 import argparse
+from process_data import process_training_data
 
 # Define the app as a flask app
 app = Flask(__name__)
 # Set Debug as True to enable quick dev
 app.config['DEBUG'] = True
-
-# Data_encodings
-# The same one we use for training
-Data_dict = {'Sex': {'male': 0, 'female': 1},
-             'Embarked': {'S': 0, 'C': 1, 'Q': 2}}
-
 
 # Define an API end point
 # This is a test to show the page is working
@@ -41,22 +36,7 @@ def prediction():
         df_data_raw = pd.read_csv(io.BytesIO(request.get_data()), encoding="latin1")
 
         # We need to format this DataFrame like our training set
-
-        # Does name contain MR
-        df_data_raw['Name Contains MR'] = df_data_raw['Name'].apply(lambda x: 'MR' in x.upper())
-        # Is there a valid ticket number
-        df_data_raw['Valid Cabin'] = ~df_data_raw['Cabin'].isna()
-
-        # Drop rows with missing values, reset index to enable rejoining
-        df_data_final = df_data_raw[['PassengerId', 'Pclass', 'Sex', 'Age', 'SibSp',
-                                     'Parch', 'Fare', 'Embarked', 'Name Contains MR',
-                                     'Valid Cabin']].dropna().reset_index(drop=True)
-
-        # Apply Data Encodings
-        df_data_final['Sex'] = df_data_final['Sex'] \
-            .apply(lambda x: Data_dict['Sex'][x])
-        df_data_final['Embarked'] = df_data_final['Embarked'] \
-            .apply(lambda x: Data_dict['Embarked'][x])
+        df_data_final = process_training_data(df_data_raw,'Test')
 
         # Use our model to predict new results
         model_results = RF.predict(df_data_final.drop(['PassengerId'], axis=1))
