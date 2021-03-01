@@ -1,4 +1,4 @@
-#ToyMl model and Simple Flask App
+# ToyMl model and Simple Flask App
 
 Python code that creates a simple titanic model and deploys this in a simple flask app
 
