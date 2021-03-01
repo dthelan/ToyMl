@@ -1,2 +1,3 @@
 /ToyML_FaskApp/models/Basic_RF.joblib
-Dockerfile_backup
+/ToyML_FaskApp/Dockerfile_backup
+.gitignore
