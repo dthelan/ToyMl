@@ -34,7 +34,7 @@ Either go to localhost:5001 and submit data or use the following from the comman
 curl --data-binary "@test.csv" --request POST http://localhost:5001/predict
 ```
 
-##Building a Docker Container
+## Building a Docker Container
 From the project dir run:
 ```bash
 docker build -t toyml:leastest . && docker run -p 5001:5000 --name ToyML toyml:leastest
