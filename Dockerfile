@@ -1,7 +1,7 @@
 FROM python:3.8-slim-buster
 
 WORKDIR /ToyML
-ADD .. /ToyML
+COPY . /ToyML
 
 RUN pip install -r requirements.txt
 
