@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from joblib import load
+from config import Config
 import pandas as pd
 import io
 import sys
@@ -8,6 +9,8 @@ from process_data import process_training_data
 
 # Define the app as a flask app
 app = Flask(__name__)
+# Import the config settings
+app.config.from_object(Config)
 # Set Debug as True to enable quick dev
 app.config['DEBUG'] = True
 

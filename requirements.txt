@@ -4,3 +4,5 @@ joblib~=0.16.0
 Flask~=1.1.2
 
 
+
+wtforms~=2.3.3
