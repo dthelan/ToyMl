@@ -8,6 +8,8 @@ import argparse
 from process_data import process_training_data
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
+
 
 # Define the app as a flask app
 app = Flask(__name__)
@@ -20,6 +22,9 @@ db = SQLAlchemy(app)
 # Link the App and DB for migrations
 migrate = Migrate(app, db)
 
+login = LoginManager(app)
+
+import models
 
 # Define an API end point
 # This is a test to show the page is working
