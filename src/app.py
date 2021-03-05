@@ -20,12 +20,24 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
+# Load the model from config file
 RF = app.config['RF']
 
+# Import app components
+# This import need to be here as they require
+# the Flask App in memory
 from models import User
-
 from forms import LoginForm
 from forms import RegistrationForm
+
+
+# End point for main page
+@app.route('/')
+@login_required
+def index():
+    """ Displays the index page accessible at '/'
+    """
+    return render_template('index.html')
 
 
 # Creates an endpoint for login
@@ -55,6 +67,7 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
+# End point for registering
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # Prevent logged user from going to the register page
@@ -89,16 +102,14 @@ def logout():
     # This will then redirect to the logon page
     return redirect(url_for('index'))
 
-
-# Define an API end point
-# This is a test to show the page is working
-
-@app.route('/')
+# End point for profile page
+@app.route('/user/<username>')
 @login_required
-def index():
-    """ Displays the index page accessible at '/'
-    """
-    return render_template('index.html')
+def user(username):
+    # Get username from DB
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)
+
 
 
 # Create the Model Predict Endpoint
@@ -139,22 +150,3 @@ def prediction():
 
         # Transpose and return the DataFrame
         return df_final.to_csv(index=False)
-
-# # Python MAIN function, need to run the app in stand alone
-# if __name__ == "__main__":
-#     # Parse command line arguments
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument('-p', help='Port Number for Web Server')
-#     parser.add_argument('-m', help='Model to load, should be .joblib')
-#     args = parser.parse_args()
-#
-#     # Check the loaded model has the correct format
-#     if args.m.split('.')[-1] != 'joblib':
-#         print('The model should be a joblib file')
-#         sys.exit()
-#
-#     # Load are model
-#     # RF = load('../models/' + args.m)
-#
-#     # Run the Web App on http://localhost:port
-#     app.run(host='0.0.0.0', port=args.p)
