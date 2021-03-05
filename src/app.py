@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, flash, redirect,url_for
+from flask import Flask, request, render_template, flash, redirect, url_for
 from joblib import load
 from config import Config
 import pandas as pd
@@ -9,7 +9,7 @@ from process_data import process_training_data
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-
+from flask_login import current_user, login_user, logout_user, login_required
 from forms import LoginForm
 
 
@@ -27,8 +27,9 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
-from flask_login import current_user, login_user,logout_user
+
 from models import User
+
 
 # Creates an endpoint for login
 @app.route('/login', methods=['GET', 'POST'])
@@ -65,7 +66,6 @@ def logout():
     # Direct the user to index page
     # This will then redirect to the logon page
     return redirect(url_for('index'))
-
 
 
 # Define an API end point
