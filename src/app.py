@@ -1,16 +1,12 @@
 from flask import Flask, request, render_template, flash, redirect, url_for
-from joblib import load
 from config import Config
 import pandas as pd
 import io
-import sys
-import argparse
 from process_data import process_training_data
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_login import current_user, login_user, logout_user, login_required
-
 
 # Define the app as a flask app
 app = Flask(__name__)
@@ -35,7 +31,7 @@ from forms import RegistrationForm
 # Creates an endpoint for login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Prevent a loged in user from going to login page
+    # Prevent a logged in user from going to login page
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     # Define form to use on page
@@ -59,6 +55,31 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    # Prevent logged user from going to the register page
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    # Use the register form
+    form = RegistrationForm()
+    # If the form is valid on submit
+    if form.validate_on_submit():
+        # Populate user form the form
+        user = User(username=form.username.data, email=form.email.data)
+        # Set the password hash from the password provided
+        user.set_password(form.password.data)
+        # Add new user to DB
+        db.session.add(user)
+        # Commit changes to DB
+        db.session.commit()
+        # Show a successful logon message
+        flash('Congratulations, you are now a registered user!')
+        # Redirect back to login
+        return redirect(url_for('login'))
+    # Display the register page with the correct form
+    return render_template('register.html', title='Register', form=form)
+
+
 # End point of logging out of the app
 @app.route('/logout')
 def logout():
@@ -71,7 +92,9 @@ def logout():
 
 # Define an API end point
 # This is a test to show the page is working
+
 @app.route('/')
+@login_required
 def index():
     """ Displays the index page accessible at '/'
     """
@@ -117,22 +140,21 @@ def prediction():
         # Transpose and return the DataFrame
         return df_final.to_csv(index=False)
 
-
-# Python MAIN function, need to run the app in stand alone
-if __name__ == "__main__":
-    # Parse command line arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-p', help='Port Number for Web Server')
-    parser.add_argument('-m', help='Model to load, should be .joblib')
-    args = parser.parse_args()
-
-    # Check the loaded model has the correct format
-    if args.m.split('.')[-1] != 'joblib':
-        print('The model should be a joblib file')
-        sys.exit()
-
-    # Load are model
-    # RF = load('../models/' + args.m)
-
-    # Run the Web App on http://localhost:port
-    app.run(host='0.0.0.0', port=args.p)
+# # Python MAIN function, need to run the app in stand alone
+# if __name__ == "__main__":
+#     # Parse command line arguments
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('-p', help='Port Number for Web Server')
+#     parser.add_argument('-m', help='Model to load, should be .joblib')
+#     args = parser.parse_args()
+#
+#     # Check the loaded model has the correct format
+#     if args.m.split('.')[-1] != 'joblib':
+#         print('The model should be a joblib file')
+#         sys.exit()
+#
+#     # Load are model
+#     # RF = load('../models/' + args.m)
+#
+#     # Run the Web App on http://localhost:port
+#     app.run(host='0.0.0.0', port=args.p)

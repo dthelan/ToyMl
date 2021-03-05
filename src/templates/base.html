@@ -24,12 +24,12 @@ body {
 
 <body>
     <div>
-        ToyML:
-        <a href="{{ url_for('index') }}">Home</a>
+<!--        ToyML:-->
         {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">Login</a>
+<!--        <a href="{{ url_for('login') }}">Login</a>-->
         {% else %}
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_f   or('logout') }}">Logout</a>
         {% endif %}
     </div>
 
