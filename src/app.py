@@ -6,6 +6,8 @@ import io
 import sys
 import argparse
 from process_data import process_training_data
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 # Define the app as a flask app
 app = Flask(__name__)
@@ -13,6 +15,10 @@ app = Flask(__name__)
 app.config.from_object(Config)
 # Set Debug as True to enable quick dev
 app.config['DEBUG'] = True
+# Add the DB to Flask App
+db = SQLAlchemy(app)
+# Link the App and DB for migrations
+migrate = Migrate(app, db)
 
 
 # Define an API end point
