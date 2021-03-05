@@ -10,15 +10,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_login import current_user, login_user, logout_user, login_required
-from forms import LoginForm
 
 
 # Define the app as a flask app
 app = Flask(__name__)
 # Import the config settings
 app.config.from_object(Config)
-# Set Debug as True to enable quick dev
-app.config['DEBUG'] = True
 # Add the DB to Flask App
 db = SQLAlchemy(app)
 # Link the App and DB for migrations
@@ -27,8 +24,12 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
+RF = app.config['RF']
 
 from models import User
+
+from forms import LoginForm
+from forms import RegistrationForm
 
 
 # Creates an endpoint for login
@@ -81,13 +82,12 @@ def index():
 # Use a command like
 # curl --data-binary "@test.csv" --request POST http://localhost:5001/predict
 @app.route('/predict', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def prediction():
     # Define different end point for different request types
     # GET - A web page style request
     if request.method == 'GET':
         return "End point for generating predictions"
-
     # POST - An upload style request
     if request.method == 'POST':
         # Turn the post request into a DataFrame
@@ -98,6 +98,7 @@ def prediction():
 
         # Use our model to predict new results
         model_results = RF.predict(df_data_final.drop(['PassengerId'], axis=1))
+        # model_results = app.config['Model'].predict(df_data_final.drop(['PassengerId'], axis=1))
 
         # Add the model results to our data frame
         df_data_final['Survived'] = model_results
@@ -131,7 +132,7 @@ if __name__ == "__main__":
         sys.exit()
 
     # Load are model
-    RF = load('../models/' + args.m)
+    # RF = load('../models/' + args.m)
 
     # Run the Web App on http://localhost:port
     app.run(host='0.0.0.0', port=args.p)

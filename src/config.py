@@ -1,4 +1,5 @@
 import os
+from joblib import load
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -12,3 +13,5 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
     # Do not flag changes in DB to app
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    RF = load('../models/' + "Basic_RF.joblib")

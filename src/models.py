@@ -1,23 +1,14 @@
 from app import db
+from app import login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import login
-
-"""
-DataBase Models - Each of the classes here represent a DB Table
-"""
-
-# Helper function, get the user ID for Flask_login
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
 
 
 
-"""
-Class for App users
-Uses Flask_Login, Mixin for user properties
-"""
+# DataBase Models - Each of the classes here represent a DB Table
+
+# Class for App users
+# Uses Flask_Login, Mixin for user properties
 class User(UserMixin, db.Model):
     """
     Database User Table containing
@@ -44,3 +35,9 @@ class User(UserMixin, db.Model):
     # Takes a user provided string and check it against the hash
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+# Helper function, get the user ID for Flask_login
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

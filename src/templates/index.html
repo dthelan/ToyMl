@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<body>
+
 <h1>Titanic Survival Prediction</h1>
 
 <p class="lead">Upload a csv file to predict if passengers would have survived the Titanic disaster. </p>
@@ -18,9 +18,6 @@
 <p>The expected column headings are <br><br>
     <i>'PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
         'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'</i> </p>
-
-</body>
-
 
 <script type="text/javascript">
   document.getElementById('files').addEventListener('change', function() {
@@ -46,4 +43,6 @@
   )
 
 </script>
+
 {% endblock %}
+
