@@ -2,6 +2,7 @@ import pandas as pd
 import io
 from process_data import process_training_data
 from flask import request
+from flask_login import login_required
 
 from app import app
 
@@ -46,3 +47,8 @@ def prediction():
 
         # Transpose and return the DataFrame
         return df_final.to_csv(index=False)
+
+@app.route('/api/resource')
+@login_required
+def get_resource():
+    return jsonify({ 'data': 'Hello, %s!' % g.user.username })

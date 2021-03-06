@@ -17,6 +17,9 @@ class User(UserMixin, db.Model):
     email - User Email
     password_hash - The hash of the users password
     """
+    # Define table name in DB
+    __tablename__ = 'users'
+    # Columns
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
