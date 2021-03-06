@@ -11,7 +11,7 @@ RF = app.config['RF']
 # Create the Model Predict Endpoint
 # Use a command like
 # curl --data-binary "@test.csv" --request POST http://localhost:5001/predict
-@app.route('/predict', methods=['GET', 'POST'])
+@app.route('/api/predict', methods=['GET', 'POST'])
 # @login_required
 def prediction():
     # Define different end point for different request types

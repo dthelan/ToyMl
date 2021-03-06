@@ -40,7 +40,7 @@ body {
     let file = this.files[0];
     let xhr = new XMLHttpRequest();
 
-    xhr.open('post', '/predict', true);
+    xhr.open('post', '/api/predict', true);
     xhr.send(file);
 
      xhr.onreadystatechange = function() {
