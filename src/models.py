@@ -2,6 +2,7 @@ from app import db
 from app import login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 
 # DataBase Models - Each of the classes here represent a DB Table
@@ -38,6 +39,16 @@ class User(UserMixin, db.Model):
     # Takes a user provided string and check it against the hash
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class Logs(db.Model):
+    # Define table name in DB
+    __tablename__ = 'logs'
+    # Columns
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    source = db.Column(db.String(120), index=True)
+    target = db.Column(db.String(120), index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
 # Helper function, get the user ID for Flask_login

@@ -1,12 +1,48 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
+from datetime import datetime
 
 from app import app
 from app import db
 
-from models import User
+from models import User, Logs
 from forms import LoginForm
 from forms import RegistrationForm
+
+# Logging Tracker
+# Dict object used for storing the current and
+# previous page.
+# Updated by the before_request function
+User_location = {'Current': None,
+                 "Target": None}
+
+# Event Logger, get the status before a request is triggered
+@app.before_request
+def before_request():
+    # Do not log favicon
+    if request.path != '/favicon.ico':
+        # Get target destination and update the location dic
+        User_location.update({'Target': request.path})
+        # If user is logged in get the user ID
+        if current_user.is_authenticated:
+            userid = current_user.id
+        # For unsigned in user give id -1
+        else:
+            userid = -1
+        # Get the timestamp now
+        timestamp = datetime.utcnow()
+        # Populate the DB log entry
+        log = Logs(user_id=userid, timestamp=timestamp,
+                   source=User_location['Current'],
+                   target=User_location['Target'])
+        # Add new entry to DB
+        db.session.add(log)
+        # Commit DB Changes
+        db.session.commit()
+        # Update if the target isn't an api update the current
+        # page with the new location
+        if request.path.split('/')[1] != 'api':
+            User_location.update({'Current': request.path})
 
 
 # End point for main page
@@ -56,7 +92,7 @@ def register():
     # If the form is valid on submit
     if form.validate_on_submit():
         # Populate user form the form
-        user = User(username=form.username.data, email=form.email.data,api_key='Test')
+        user = User(username=form.username.data, email=form.email.data, api_key='Test')
         # Set the password hash from the password provided
         user.set_password(form.password.data)
         # Add new user to DB
