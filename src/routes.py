@@ -8,6 +8,7 @@ from models import User
 from forms import LoginForm
 from forms import RegistrationForm
 
+
 # End point for main page
 @app.route('/')
 @login_required
@@ -55,7 +56,7 @@ def register():
     # If the form is valid on submit
     if form.validate_on_submit():
         # Populate user form the form
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data,api_key='Test')
         # Set the password hash from the password provided
         user.set_password(form.password.data)
         # Add new user to DB
@@ -78,6 +79,7 @@ def logout():
     # Direct the user to index page
     # This will then redirect to the logon page
     return redirect(url_for('index'))
+
 
 # End point for profile page
 @app.route('/user/<username>')

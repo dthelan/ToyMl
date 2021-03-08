@@ -4,7 +4,6 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-
 # DataBase Models - Each of the classes here represent a DB Table
 
 # Class for App users
@@ -24,6 +23,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    api_key = db.Column(db.String(128))
 
     # Info on how to print user class
     # <User Name>
@@ -44,3 +44,15 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+#  Helper function for API user loader from Key
+@login.request_loader
+def load_user_from_request(request):
+    # first, try to login using the api_key url arg
+    api_key = request.args.get('api_key')
+    if api_key:
+        user = User.query.filter_by(api_key=api_key).first()
+        if user:
+            return user
+    return None

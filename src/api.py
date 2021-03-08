@@ -1,19 +1,28 @@
 import pandas as pd
 import io
 from process_data import process_training_data
-from flask import request
+from flask import request, jsonify
 from flask_login import login_required
+import flask_login
 
 from app import app
 
 # Load the model from config file
 RF = app.config['RF']
 
+
+@app.route('/api/ping')
+@login_required
+# Test API
+def ping():
+    return "Pong"
+
+
 # Create the Model Predict Endpoint
 # Use a command like
-# curl --data-binary "@test.csv" --request POST http://localhost:5001/predict
+# curl --data-binary "@test.csv" --request POST http://localhost:5000/api/predict?api_key=api_key
 @app.route('/api/predict', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def prediction():
     # Define different end point for different request types
     # GET - A web page style request
@@ -48,7 +57,3 @@ def prediction():
         # Transpose and return the DataFrame
         return df_final.to_csv(index=False)
 
-@app.route('/api/resource')
-@login_required
-def get_resource():
-    return jsonify({ 'data': 'Hello, %s!' % g.user.username })
