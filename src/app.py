@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 
-# Define the app as a flask app
+# Define app as a flask app
 app = Flask(__name__)
 # Import the config settings
 app.config.from_object(Config)
@@ -21,7 +21,6 @@ login.login_view = 'login'
 # the Flask App in memory
 import routes
 import api
-# import logging
 
 
 

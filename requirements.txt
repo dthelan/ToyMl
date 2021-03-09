@@ -1,6 +1,11 @@
 pandas
-sklearn
-joblib~=0.16.0
-Flask~=1.1.2
+scikit-learn
+joblib
+Flask
 wtforms
 werkzeug
+flask-sqlalchemy
+Flask-Migrate
+flask-login
+Flask-WTF
+email-validator
