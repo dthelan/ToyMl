@@ -3,8 +3,8 @@ from joblib import load
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-class Config(object):
 
+class Config(object):
     # Key for encrypt
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 

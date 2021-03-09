@@ -16,6 +16,7 @@ from forms import RegistrationForm
 User_location = {'Current': None,
                  "Target": None}
 
+
 # Event Logger, get the status before a request is triggered
 @app.before_request
 def before_request():
