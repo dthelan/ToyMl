@@ -7,7 +7,7 @@ from models import User
 
 
 class GenerateAPI(FlaskForm):
-    submit = SubmitField('Generate new API')
+    submit = SubmitField('Generate new API Key')
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
