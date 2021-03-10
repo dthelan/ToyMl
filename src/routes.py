@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
+import uuid
 
 from app import app
 from app import db
@@ -8,6 +9,7 @@ from app import db
 from models import User, Logs
 from forms import LoginForm
 from forms import RegistrationForm
+from forms import GenerateAPI
 
 # Logging Tracker
 # Dict object used for storing the current and
@@ -92,8 +94,12 @@ def register():
     form = RegistrationForm()
     # If the form is valid on submit
     if form.validate_on_submit():
+        # Generate a unique api_key
+        api_key = uuid.uuid4().hex
         # Populate user form the form
-        user = User(username=form.username.data, email=form.email.data, api_key='Test')
+        user = User(username=form.username.data,
+                    email=form.email.data,
+                    api_key=api_key)
         # Set the password hash from the password provided
         user.set_password(form.password.data)
         # Add new user to DB
@@ -119,9 +125,16 @@ def logout():
 
 
 # End point for profile page
-@app.route('/user/<username>')
+@app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
+    form = GenerateAPI()
     # Get username from DB
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user=user)
+    # Regenerate API Key on subbmit
+    if form.validate_on_submit():
+        new_key = uuid.uuid4().hex
+        current_user.api_key = new_key
+        db.session.commit()
+        return render_template('user.html', user=user, form=form)
+    return render_template('user.html', user=user, form=form)

@@ -6,6 +6,9 @@ from flask_wtf.file import FileField, FileRequired
 from models import User
 
 
+class GenerateAPI(FlaskForm):
+    submit = SubmitField('Generate new API')
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

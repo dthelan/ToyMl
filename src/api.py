@@ -2,8 +2,12 @@ import pandas as pd
 import io
 from process_data import process_training_data
 from flask import request, jsonify
-from flask_login import login_required
+from flask_login import login_required,current_user
 import flask_login
+import uuid
+
+from models import User
+from app import db
 
 from app import app
 
@@ -16,7 +20,6 @@ RF = app.config['RF']
 # Test API
 def ping():
     return "Pong"
-
 
 # Create the Model Predict Endpoint
 # Use a command like
@@ -56,4 +59,3 @@ def prediction():
 
         # Transpose and return the DataFrame
         return df_final.to_csv(index=False)
-

@@ -1,7 +1,21 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
 
 <h1>User: {{ user.username }}</h1>
+
+
+<br>
+<br>
+Current API Key
+<br>
+<br>
+{{ user.api_key }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
 
 {% endblock %}
