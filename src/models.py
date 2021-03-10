@@ -3,6 +3,7 @@ from app import login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from flask import abort
 
 
 # DataBase Models - Each of the classes here represent a DB Table
@@ -40,6 +41,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class Logs(db.Model):
     # Define table name in DB
     __tablename__ = 'logs'
@@ -51,12 +53,6 @@ class Logs(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
-# Helper function, get the user ID for Flask_login
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
-
-
 #  Helper function for API user loader from Key
 @login.request_loader
 def load_user_from_request(request):
@@ -66,4 +62,12 @@ def load_user_from_request(request):
         user = User.query.filter_by(api_key=api_key).first()
         if user:
             return user
-    return None
+    # If no key found return a 401 (Unauthorized) error
+    # return abort(401)
+    return
+
+
+# Helper function, get the user ID for Flask_login
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
