@@ -116,7 +116,7 @@ def logout():
     logout_user()
     # Direct the user to index page
     # This will then redirect to the logon page
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 
 # End point for profile page
