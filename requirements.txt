@@ -9,3 +9,4 @@ Flask-Migrate
 flask-login
 Flask-WTF
 email-validator
+flask-bootstrap

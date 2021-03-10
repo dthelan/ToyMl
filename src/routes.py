@@ -8,6 +8,7 @@ from app import db
 from models import User, Logs
 from forms import LoginForm
 from forms import RegistrationForm
+from forms import TestFileForm
 
 # Logging Tracker
 # Dict object used for storing the current and
@@ -47,7 +48,7 @@ def before_request():
 
 
 # End point for main page
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
     """ Displays the index page accessible at '/'

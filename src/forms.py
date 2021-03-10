@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from flask_wtf.file import FileField, FileRequired
 
 from models import User
 
@@ -29,3 +30,9 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+
+class TestFileForm(FlaskForm):
+    Test_DataFile = FileField('Data File', validators=[FileRequired()])
+
+    submit_testing = SubmitField('Submit')
