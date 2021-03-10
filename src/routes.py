@@ -8,7 +8,6 @@ from app import db
 from models import User, Logs
 from forms import LoginForm
 from forms import RegistrationForm
-from forms import TestFileForm
 
 # Logging Tracker
 # Dict object used for storing the current and
