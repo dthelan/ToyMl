@@ -2,25 +2,34 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+<style>
+    #Left {
+position: relative;
+top: 0%;
+width: 50%;
+float: left
+}
+
+#Right {
+position: relative;
+width: 50%;
+float: left
+}
+</style>
+
 <h1>Generate New Prediction</h1>
 <br>
-<table style="width:70%">
-    <tr>
-        <td>
+<div id="Left">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-10">
                     {{ wtf.quick_form(form) }}
                 </div>
             </div>
         </td>
-        <td align="right" style="vertical-align: top">
-            <h3>Predicted Value</h3>
-        </td>
-    </tr>
-    <tr>
-    <td></td>
-        <td>{{value}}</td>
-    </tr>
-</table>
-<br>
+</div>
+<div id="Right">
+    <h3>Predicted Value</h3>
+    <h3>{{value}}</h3>
+</div>
+
 {% endblock %}

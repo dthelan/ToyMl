@@ -16,15 +16,12 @@
     </th>
   </tr>
 </table>
-
-
-<h3>
-    <p id="api_key" style="width:70%; word-wrap:break-word;"> {{ user.api_key }}</p>
-</h3>
 <br>
+<h4>
+    <p id="api_key" style="width:70%; word-wrap:break-word;"> {{ user.api_key }}</p>
+</h4>
 <br>
 {{ wtf.quick_form(form) }}
-
 
 <script type="text/javascript">
   document.getElementById('button').addEventListener('click', function() {
