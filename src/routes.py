@@ -1,11 +1,17 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 import random
 from datetime import datetime
 import jwt
+import pandas as pd
+import io
+import requests
 
 from app import app
 from app import db
+
+# from api import prediction
+import api
 
 from models import User, Logs
 from forms import LoginForm
@@ -19,6 +25,8 @@ from forms import PredictForm
 # Updated by the before_request function
 User_location = {'Current': None,
                  "Target": None}
+
+base_url = "http://localhost:5000"
 
 
 # Event Logger, get the status before a request is triggered
@@ -93,21 +101,19 @@ def login():
 
 @app.route('/New_Prediction', methods=['GET', 'POST'])
 @login_required
-def Predict():
+def single_predict():
     form = PredictForm()
     if form.validate_on_submit():
-        # df_new_data = form.csv(form.Name.data,
-        #                        form.Sex.data,
-        #                        form.Age.data,
-        #                        form.Fare.data,
-        #                        form.Pclass.data,
-        #                        form.SibSp.data,
-        #                        form.Parch.data,
-        #                        form.Ticket.data,
-        #                        form.Embarked.data)
-        # requests.post('http://localhost:5000/api/predict')
+        data = form.csv()
+        response = requests.post(base_url + url_for('prediction'),
+                                 data=data, params={'api_key': current_user.api_key})
+        prediction = pd.read_csv(io.StringIO(response.text))['Survived'][0]
+        if prediction == 0:
+            outcome = "Didn't Survive"
+        elif prediction == 1:
+            outcome = "Survived"
 
-        return render_template('newprediction.html', form=form,value=random.random())
+        return render_template('newprediction.html', form=form, value=outcome)
     return render_template('newprediction.html', form=form)
 
 

@@ -28,7 +28,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('index') }}">Upload File</a></li>
-                    <li><a href="{{ url_for('Predict') }}">Single Prediction</a></li>
+                    <li><a href="{{ url_for('single_predict') }}">Single Prediction</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
@@ -56,4 +56,7 @@
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
     </div>
+{% endblock %}
+
+{% block scripts %}
 {% endblock %}

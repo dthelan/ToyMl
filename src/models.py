@@ -57,10 +57,8 @@ class Logs(db.Model):
 def load_user_from_request(request):
     # first, try to login using the api_key url arg
     api_key = request.args.get('api_key')
-    print(api_key)
     if api_key:
         user = User.query.filter_by(api_key=api_key).first()
-        print(user)
         if user:
             return user
     # If no key found return a 401 (Unauthorized) error

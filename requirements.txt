@@ -10,4 +10,4 @@ flask-login
 Flask-WTF
 email-validator
 flask-bootstrap
-uuid
+pyjwt

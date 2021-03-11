@@ -29,7 +29,16 @@ float: left
 </div>
 <div id="Right">
     <h3>Predicted Value</h3>
-    <h3>{{value}}</h3>
+    <h1>{{value}}</h1>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  document.getElementById('submit').addEventListener('click', function() {
+      console.log("Here")
+
+  });
+</script>
 {% endblock %}
