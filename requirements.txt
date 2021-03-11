@@ -11,3 +11,4 @@ Flask-WTF
 email-validator
 flask-bootstrap
 pyjwt
+requests
