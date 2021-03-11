@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
+import random
 from datetime import datetime
 import jwt
 
@@ -10,6 +11,7 @@ from models import User, Logs
 from forms import LoginForm
 from forms import RegistrationForm
 from forms import GenerateAPI
+from forms import PredictForm
 
 # Logging Tracker
 # Dict object used for storing the current and
@@ -57,7 +59,7 @@ def index():
     return render_template('index.html')
 
 
-# Creates an endpoint for login
+# End point for main page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # Prevent a logged in user from going to login page
@@ -82,6 +84,31 @@ def login():
         return redirect(url_for('index'))
     # Render the login page for new users
     return render_template('login.html', title='Sign In', form=form)
+
+
+# Creates an endpoint for login
+""" Displays the index page accessible at '/'
+    """
+
+
+@app.route('/New_Prediction', methods=['GET', 'POST'])
+@login_required
+def Predict():
+    form = PredictForm()
+    if form.validate_on_submit():
+        # df_new_data = form.csv(form.Name.data,
+        #                        form.Sex.data,
+        #                        form.Age.data,
+        #                        form.Fare.data,
+        #                        form.Pclass.data,
+        #                        form.SibSp.data,
+        #                        form.Parch.data,
+        #                        form.Ticket.data,
+        #                        form.Embarked.data)
+        # requests.post('http://localhost:5000/api/predict')
+
+        return render_template('newprediction.html', form=form,value=random.random())
+    return render_template('newprediction.html', form=form)
 
 
 # End point for registering
@@ -130,7 +157,6 @@ def logout():
 @app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
-
     form = GenerateAPI()
     # Get username from DB
     user = User.query.filter_by(username=username).first_or_404()

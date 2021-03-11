@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<h1>Generate New Prediction</h1>
+<br>
+<table style="width:70%">
+    <tr>
+        <td>
+            <div class="row">
+                <div class="col-md-4">
+                    {{ wtf.quick_form(form) }}
+                </div>
+            </div>
+        </td>
+        <td align="right" style="vertical-align: top">
+            <h3>Predicted Value</h3>
+        </td>
+    </tr>
+    <tr>
+    <td></td>
+        <td>{{value}}</td>
+    </tr>
+</table>
+<br>
+{% endblock %}
