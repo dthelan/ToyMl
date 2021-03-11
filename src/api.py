@@ -1,7 +1,7 @@
 import pandas as pd
 import io
 from process_data import process_training_data
-from flask import request, jsonify
+from flask import request
 from flask_login import login_required,current_user
 import flask_login
 import uuid

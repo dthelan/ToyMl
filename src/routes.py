@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
-import uuid
+import jwt
 
 from app import app
 from app import db
@@ -95,7 +95,9 @@ def register():
     # If the form is valid on submit
     if form.validate_on_submit():
         # Generate a unique api_key
-        api_key = uuid.uuid4().hex
+        api_key = jwt.encode({"User": str(form.username.data),
+                              "Time": str(datetime.utcnow())},
+                             app.config['SECRET_KEY'], algorithm="HS256")
         # Populate user form the form
         user = User(username=form.username.data,
                     email=form.email.data,
@@ -128,12 +130,16 @@ def logout():
 @app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
+
     form = GenerateAPI()
     # Get username from DB
     user = User.query.filter_by(username=username).first_or_404()
+    print(str(user.username))
     # Regenerate API Key on subbmit
     if form.validate_on_submit():
-        new_key = uuid.uuid4().hex
+        new_key = jwt.encode({"User": str(user.username),
+                              "Time": str(datetime.utcnow())},
+                             app.config['SECRET_KEY'], algorithm="HS256")
         current_user.api_key = new_key
         db.session.commit()
         return render_template('user.html', user=user, form=form)
