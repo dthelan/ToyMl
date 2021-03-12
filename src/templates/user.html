@@ -26,6 +26,7 @@
 <script type="text/javascript">
   document.getElementById('button').addEventListener('click', function() {
       const api_key = document.getElementById('api_key').innerHTML;
+      console.log(api_key)
       navigator.clipboard.writeText(api_key)
 
   });

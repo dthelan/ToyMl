@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM toyml:latest
 
 WORKDIR /ToyML
 COPY . /ToyML
@@ -9,4 +9,10 @@ WORKDIR src
 
 RUN python build_model.py -t train.csv -m Basic_RF.joblib
 
-CMD python app.py -m Basic_RF.joblib
+ENV FlASK_APP = app.py
+
+RUN flask db init
+RUN flask db migrate
+RUN flask db upgrade
+
+CMD flask run

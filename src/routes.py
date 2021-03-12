@@ -1,6 +1,5 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request, jsonify, abort, session
 from flask_login import current_user, login_user, logout_user, login_required
-import random
 from datetime import datetime
 import jwt
 import pandas as pd
@@ -10,8 +9,6 @@ import requests
 from app import app
 from app import db
 
-# from api import prediction
-import api
 
 from models import User, Logs
 from forms import LoginForm
@@ -67,7 +64,7 @@ def index():
     return render_template('index.html')
 
 
-# End point for main page
+# Creates an endpoint for login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # Prevent a logged in user from going to login page
@@ -94,27 +91,21 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
-# Creates an endpoint for login
-""" Displays the index page accessible at '/'
-    """
-
-
 @app.route('/New_Prediction', methods=['GET', 'POST'])
 @login_required
 def single_predict():
     form = PredictForm()
     if form.validate_on_submit():
         data = form.csv()
-        response = requests.post(base_url + url_for('prediction'),
+        response = requests.post(url_for('prediction', _external=True),
                                  data=data, params={'api_key': current_user.api_key})
-        prediction = pd.read_csv(io.StringIO(response.text))['Survived'][0]
-        if prediction == 0:
+        result = pd.read_csv(io.StringIO(response.text))['Survived'][0]
+        if result == 0:
             outcome = "Didn't Survive"
-        elif prediction == 1:
+        elif result == 1:
             outcome = "Survived"
-
-        return render_template('newprediction.html', form=form, value=outcome)
-    return render_template('newprediction.html', form=form)
+        return render_template('new_prediction.html', form=form, value=outcome)
+    return render_template('new_prediction.html', form=form)
 
 
 # End point for registering

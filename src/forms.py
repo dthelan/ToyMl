@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms import SelectField, FloatField, IntegerField, DecimalField
+from wtforms import SelectField, FloatField, DecimalField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from flask_wtf.file import FileField, FileRequired
 import pandas as pd
 
 from models import User
@@ -30,7 +29,7 @@ class PredictForm(FlaskForm):
                                          'Fare', 'Pclass', 'Cabin',
                                          'SibSp', 'Parch', 'Ticket', 'Embarked'])\
             .to_csv(index=False)
-        return str.encode(csv_data)
+        return csv_data
 
 
 class GenerateAPI(FlaskForm):
