@@ -9,9 +9,10 @@ from app import app
 # Load the model from config file
 RF = app.config['RF']
 
+# Test API
+# curl --request POST http://localhost:5000/api/ping?api_key=api_key
 @app.route('/api/ping')
 @login_required
-# Test API
 def ping():
     return "Pong"
 

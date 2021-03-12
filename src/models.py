@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     username - Username for user
     email - User Email
     password_hash - The hash of the users password
+    api_key - API Key of the user, comes from a JWT hash
     """
     # Define table name in DB
     __tablename__ = 'users'

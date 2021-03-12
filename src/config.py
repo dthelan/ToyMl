@@ -13,4 +13,5 @@ class Config(object):
     # Do not flag changes in DB to app
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Load the Random Forest model
     RF = load('../models/' + "Basic_RF.joblib")
