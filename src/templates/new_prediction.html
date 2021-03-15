@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
-{% block more_css %}
-
-{% endblock %}
-
-{% block app_content %}
+{% block styles %}
+{{super()}}
 <style>
     #Left {
 position: relative;
@@ -20,7 +17,10 @@ width: 50%;
 float: left
 }
 </style>
+{% endblock styles %}
 
+
+{% block app_content %}
 
 <h1>Generate New Prediction</h1>
 <br>
@@ -37,4 +37,4 @@ float: left
     <h1>{{value}}</h1>
 </div>
 
-{% endblock %}
+{% endblock app_content %}

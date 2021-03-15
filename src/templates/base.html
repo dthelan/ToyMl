@@ -1,16 +1,16 @@
 {% extends 'bootstrap/base.html' %}
 
-<head>
 {% block title %}
-    {% if title %}{{ title }} {% else %}Title{% endif %}
-{% endblock %}
+    <title>{% if title %}{{ title }} {% else %}Title{% endif %}</title>
+{% endblock title %}
 
+{% block styles %}
+{{super()}}
 <style>
-{% block more_css %}
-{% endblock %}
-</style>
 
-</head>
+</style>
+{% endblock styles %}
+
 <body>
 
 {% block navbar %}
