@@ -7,11 +7,8 @@
 <br>
 <br>
 <p class="lead">Upload a csv file to predict if passengers would have survived the Titanic disaster. </p>
-<br>
-<div class="custom-file mb-3">
-    <input class="form-control-file" id="files" name="filename" type="file">
-</div>
 
+{{ wtf.quick_form(form) }}
 <br>
 <br>
 
@@ -19,30 +16,6 @@
     <i>'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
         'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'</i> </p>
 
-<script type="text/javascript">
-  document.getElementById('files').addEventListener('change', function() {
-    let file = this.files[0];
-    let xhr = new XMLHttpRequest();
-
-    xhr.open('post', '/api/predict', true);
-    xhr.send(file);
-
-     xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            let blob = new Blob([this.response], {type: 'text/csv'})
-            let a = document.createElement("a")
-            a.style = "display: none";
-            document.body.appendChild(a)
-            let url = window.URL.createObjectURL(blob)
-            a.href = url
-            a.download = 'Predictions.csv'
-            a.click()
-            window.URL.revokeObjectURL(url)
-        } };
-  }
-  )
-
-</script>
 {% endblock %}
 
 

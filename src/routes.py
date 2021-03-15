@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify, abort, session
+from flask import render_template, flash, redirect, url_for, request, jsonify, abort, session, send_file
 from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
 import jwt
@@ -15,6 +15,7 @@ from forms import LoginForm
 from forms import RegistrationForm
 from forms import GenerateAPI
 from forms import PredictForm
+from forms import FileUploadForm
 
 # Logging Tracker
 # Dict object used for storing the current and
@@ -61,7 +62,17 @@ def before_request():
 def index():
     """ Displays the index page accessible at '/'
     """
-    return render_template('index.html')
+    form = FileUploadForm()
+    if form.validate_on_submit():
+        response = requests.post(url_for('prediction', _external=True),
+                                 data=form.file.data, params={'api_key': current_user.api_key})
+        result = pd.read_csv(io.StringIO(response.text)).to_csv(index=False)
+        mem = io.BytesIO()
+        mem.write(result.encode())
+        mem.seek(0)
+        return send_file(mem, as_attachment=True,
+                         attachment_filename='test.csv', mimetype='text/csv')
+    return render_template('index.html', form=form)
 
 
 # Creates an endpoint for login
@@ -156,8 +167,7 @@ def logout():
 def user(username):
     form = GenerateAPI()
     # Get username from DB
-    user = User.query.filter_by(username=username).first_or_404()
-    print(str(user.username))
+    user = current_user
     # Regenerate API Key on subbmit
     if form.validate_on_submit():
         new_key = jwt.encode({"User": str(user.username),

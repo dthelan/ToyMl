@@ -43,7 +43,6 @@ def prediction():
         df_final = data.merge(df_outcomes, left_on=['PassengerId'],
                               right_on=['PassengerId'], how='inner'). \
             drop(['Name Contains MR', 'Valid Cabin'], axis=1)
-
         # Transpose and return the DataFrame
         return df_final.to_csv(index=False)
     # GET - A web page style request

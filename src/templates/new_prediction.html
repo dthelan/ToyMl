@@ -20,13 +20,13 @@ float: left
 <h1>Generate New Prediction</h1>
 <br>
 <div id="Left">
-            <div class="row">
-                <div class="col-md-10">
-                    {{ wtf.quick_form(form) }}
-                </div>
-            </div>
-        </td>
+    <div class="row">
+        <div class="col-md-10">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
 </div>
+
 <div id="Right">
     <h2>Predicted Value</h2>
     <h1>{{value}}</h1>
@@ -38,7 +38,6 @@ float: left
 <script type="text/javascript">
   document.getElementById('submit').addEventListener('click', function() {
       console.log("Here")
-
   });
 </script>
 {% endblock %}

@@ -1,10 +1,16 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms import SelectField, FloatField, DecimalField
+from wtforms import SelectField, FloatField, DecimalField, FileField
+
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 import pandas as pd
 
 from models import User
+
+
+class FileUploadForm(FlaskForm):
+    file = FileField(validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 
 class PredictForm(FlaskForm):
@@ -27,7 +33,7 @@ class PredictForm(FlaskForm):
                                   self.Embarked.data]],
                                 columns=['PassengerId', 'Name', 'Sex', 'Age',
                                          'Fare', 'Pclass', 'Cabin',
-                                         'SibSp', 'Parch', 'Ticket', 'Embarked'])\
+                                         'SibSp', 'Parch', 'Ticket', 'Embarked']) \
             .to_csv(index=False)
         return csv_data
 
