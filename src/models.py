@@ -48,8 +48,9 @@ class Logs(db.Model):
     # Columns
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    source = db.Column(db.String(120), index=True)
-    target = db.Column(db.String(120), index=True)
+    path = db.Column(db.String(120), index=True)
+    method = db.Column(db.String(120), index=True)
+    status = db.Column(db.String(120), index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 

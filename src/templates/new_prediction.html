@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+{% block more_css %}
+
+{% endblock %}
+
 {% block app_content %}
 <style>
     #Left {
@@ -17,6 +21,7 @@ float: left
 }
 </style>
 
+
 <h1>Generate New Prediction</h1>
 <br>
 <div id="Left">
@@ -32,12 +37,4 @@ float: left
     <h1>{{value}}</h1>
 </div>
 
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-  document.getElementById('submit').addEventListener('click', function() {
-      console.log("Here")
-  });
-</script>
 {% endblock %}

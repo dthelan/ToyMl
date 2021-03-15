@@ -1,40 +1,29 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify, abort, session, send_file
-from flask_login import current_user, login_user, logout_user, login_required
+import io
 from datetime import datetime
+
 import jwt
 import pandas as pd
-import io
 import requests
+from flask import render_template, flash, redirect, url_for, request, send_file
+from flask_login import current_user, login_user, logout_user, login_required
 
 from app import app
 from app import db
-
-
-from models import User, Logs
-from forms import LoginForm
-from forms import RegistrationForm
-from forms import GenerateAPI
-from forms import PredictForm
 from forms import FileUploadForm
-
-# Logging Tracker
-# Dict object used for storing the current and
-# previous page.
-# Updated by the before_request function
-User_location = {'Current': None,
-                 "Target": None}
-
-base_url = "http://localhost:5000"
+from forms import GenerateAPI
+from forms import LoginForm
+from forms import PredictForm
+from forms import RegistrationForm
+from models import User, Logs
 
 
-# Event Logger, get the status before a request is triggered
-@app.before_request
-def before_request():
+# Event Logger, get the status after a request is triggered
+@app.after_request
+# After request requires a response object
+def after_request(response):
     # Do not log favicon
     if request.path != '/favicon.ico':
-        # Get target destination and update the location dic
-        User_location.update({'Target': request.path})
-        # If user is logged in get the user ID
+        # If user is logged in get user ID
         if current_user.is_authenticated:
             userid = current_user.id
         # For unsigned in user give id -1
@@ -43,36 +32,104 @@ def before_request():
         # Get the timestamp now
         timestamp = datetime.utcnow()
         # Populate the DB log entry
+        # Use request.XX to get the method and path
+        # Use response.status to get the status code
         log = Logs(user_id=userid, timestamp=timestamp,
-                   source=User_location['Current'],
-                   target=User_location['Target'])
+                   path=request.path, method=request.method,
+                   status=response.status)
         # Add new entry to DB
         db.session.add(log)
         # Commit DB Changes
         db.session.commit()
-        # Update if the target isn't an api update the current
-        # page with the new location
-        if request.path.split('/')[1] != 'api':
-            User_location.update({'Current': request.path})
+    # Return the response object
+    return response
 
 
 # End point for main page
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    """ Displays the index page accessible at '/'
-    """
+    # Use the file upload form
     form = FileUploadForm()
+    # If the file upload form is valid on submit
     if form.validate_on_submit():
+        # Get the data from the form
+        # This is important reading the stream pop's it out of mem
+        data = form.file.data.stream.read()
+        # Perform some error handling!!!
+        # Try and load top of the csv into mem as a csv
+        try:
+            df_file_top = pd.read_csv(io.BytesIO(data), nrows=1)
+        except IOError:
+            # Flash -> Could load the csv file
+            flash('Invalid CSV File')
+            return redirect(url_for('index'))
+        # Get the headers from the csv file
+        headers = list(df_file_top.columns)
+        # Sort the column names so we can check against list
+        headers.sort()
+        # Expected col names
+        expected = ['Age', 'Cabin', 'Embarked',
+                    'Fare', 'Name', 'Parch',
+                    'PassengerId', 'Pclass',
+                    'Sex', 'SibSp', 'Ticket']
+        # Check csv against list
+        if headers != expected:
+            # Flash -> The csv file doesn't contain the correct columns
+            flash('File does not contain the correct columns')
+            # Loop back round to login page
+            return redirect(url_for('index'))
+        # Check the csv has at least one row
+        if df_file_top.shape[0] < 1:
+            # Flash -> The csv file doesn't have any rows
+            flash('the csv file does not contain any rows')
+            # Loop back round to login page
+            return redirect(url_for('index'))
+        # If we pass the error handling more to the predict step
         response = requests.post(url_for('prediction', _external=True),
-                                 data=form.file.data, params={'api_key': current_user.api_key})
+                                 data=data, params={'api_key': current_user.api_key})
+        # Convert returned string to a csv
         result = pd.read_csv(io.StringIO(response.text)).to_csv(index=False)
+        # flask file send works with either an file location or BytesIO
+        # Wrap csv into a BytesIO Object
+        # Define a BytesIO Object
         mem = io.BytesIO()
+        # Add the CSV file to it
         mem.write(result.encode())
+        # Change position in buffer back to beginning
         mem.seek(0)
+        # Flask send buffer to client
         return send_file(mem, as_attachment=True,
-                         attachment_filename='test.csv', mimetype='text/csv')
+                         attachment_filename='predictions.csv',
+                         mimetype='text/csv')
+    # Render the index page with Flask file upload form
     return render_template('index.html', form=form)
+
+
+# End point for prediction form page
+@app.route('/New_Prediction', methods=['GET', 'POST'])
+@login_required
+def single_predict():
+    # Use the Prediction form for the page
+    form = PredictForm()
+    # If form valid on submit
+    if form.validate_on_submit():
+        # Use form method to turn get the form as a csv
+        data = form.csv()
+        # Send the csv/form file to the prediction end point
+        response = requests.post(url_for('prediction', _external=True),
+                                 data=data, params={'api_key': current_user.api_key})
+        # Parse the results and get the outcome of the prediction of the survived column
+        result = pd.read_csv(io.StringIO(response.text))['Survived'][0]
+        # Translate the model prediction into plain text
+        if result == 0:
+            outcome = "Didn't Survive"
+        else:
+            outcome = "Survived"
+        # Render the page with the prediction outcome included
+        return render_template('new_prediction.html', form=form, value=outcome)
+    # Render the page with the prediction form
+    return render_template('new_prediction.html', form=form)
 
 
 # Creates an endpoint for login
@@ -100,23 +157,6 @@ def login():
         return redirect(url_for('index'))
     # Render the login page for new users
     return render_template('login.html', title='Sign In', form=form)
-
-
-@app.route('/New_Prediction', methods=['GET', 'POST'])
-@login_required
-def single_predict():
-    form = PredictForm()
-    if form.validate_on_submit():
-        data = form.csv()
-        response = requests.post(url_for('prediction', _external=True),
-                                 data=data, params={'api_key': current_user.api_key})
-        result = pd.read_csv(io.StringIO(response.text))['Survived'][0]
-        if result == 0:
-            outcome = "Didn't Survive"
-        elif result == 1:
-            outcome = "Survived"
-        return render_template('new_prediction.html', form=form, value=outcome)
-    return render_template('new_prediction.html', form=form)
 
 
 # End point for registering
@@ -151,6 +191,29 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
+# End point for profile page
+@app.route('/user/<username>', methods=['GET', 'POST'])
+@login_required
+def user(username):
+    form = GenerateAPI()
+    # Get the details for the current logged in user
+    user = current_user
+    # If form valid on submit
+    if form.validate_on_submit():
+        # Generate a new api for the current user
+        new_key = jwt.encode({"User": str(user.username),
+                              "Time": str(datetime.utcnow())},
+                             app.config['SECRET_KEY'], algorithm="HS256")
+        # Change update the current user if the new api key
+        current_user.api_key = new_key
+        # Commit new api key to the database
+        db.session.commit()
+        # Render the user page with the new api key
+        return render_template('user.html', user=user, form=form)
+    # Render the user page with the current user details
+    return render_template('user.html', user=user, form=form)
+
+
 # End point of logging out of the app
 @app.route('/logout')
 def logout():
@@ -159,21 +222,3 @@ def logout():
     # Direct the user to index page
     # This will then redirect to the logon page
     return redirect(url_for('login'))
-
-
-# End point for profile page
-@app.route('/user/<username>', methods=['GET', 'POST'])
-@login_required
-def user(username):
-    form = GenerateAPI()
-    # Get username from DB
-    user = current_user
-    # Regenerate API Key on subbmit
-    if form.validate_on_submit():
-        new_key = jwt.encode({"User": str(user.username),
-                              "Time": str(datetime.utcnow())},
-                             app.config['SECRET_KEY'], algorithm="HS256")
-        current_user.api_key = new_key
-        db.session.commit()
-        return render_template('user.html', user=user, form=form)
-    return render_template('user.html', user=user, form=form)
