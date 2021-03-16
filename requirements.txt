@@ -4,6 +4,7 @@ joblib
 Flask
 wtforms
 werkzeug
+SQLAlchemy==1.3.23
 flask-sqlalchemy
 Flask-Migrate
 flask-login

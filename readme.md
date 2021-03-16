@@ -2,6 +2,9 @@
 
 Python code that creates a simple titanic model and deploys this in a Flask app
 
+This Flask app uses almost exclusively server side rendering and as 
+such all the functionality is editable from the Python code
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to by running
@@ -58,3 +61,12 @@ From the project dir run:
 docker build -t toyml:leastest . && docker run -p 5000:5000 --name ToyML toyml:leastest
 ```
 to build and run the newly built container
+
+## Possible Improvements
+
+* Unit tests
+* Flask Blueprints for Auth and Logging
+* YAML Config Files
+* Client Side Functionality (deliberately left out at the moment)
+
+

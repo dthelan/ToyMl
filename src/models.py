@@ -88,5 +88,4 @@ def load_user_from_request(request):
 # Helper function, get the user ID for Flask_login
 @login.user_loader
 def load_user(id):
-    print('User loader')
     return User.query.get(int(id))
