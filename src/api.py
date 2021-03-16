@@ -2,7 +2,6 @@ import pandas as pd
 import io
 from process_data import process_training_data
 from flask import request
-from flask_login import login_required
 
 from app import app
 from app import auth
