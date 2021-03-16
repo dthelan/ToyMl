@@ -5,6 +5,7 @@ from flask import request
 from flask_login import login_required
 
 from app import app
+from app import auth
 
 # Load the model from config file
 RF = app.config['RF']
@@ -13,7 +14,7 @@ RF = app.config['RF']
 # Test API
 # curl --request POST http://localhost:5000/api/ping?api_key=api_key
 @app.route('/api/ping')
-@login_required
+@auth.login_required
 def ping():
     return "Pong"
 
@@ -22,7 +23,7 @@ def ping():
 # Use a command like
 # curl --data-binary "@test.csv" --request POST http://localhost:5000/api/predict?api_key=api_key
 @app.route('/api/predict', methods=['GET', 'POST'])
-@login_required
+@auth.login_required
 def prediction():
     # Define different end point for different request types
     # POST - An upload style request

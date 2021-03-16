@@ -8,6 +8,7 @@ import werkzeug
 import traceback
 
 from app import app
+from app import auth
 
 
 # DataBase Models - Each of the classes here represent a DB Table
@@ -61,42 +62,21 @@ class Logs(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
-@app.errorhandler(werkzeug.exceptions.Unauthorized)
+@app.errorhandler(401)
 def handle_exception(err):
     """Return JSON instead of HTML for any other server error"""
-    app.logger.error(f"Unknown Exception: {str(err)}")
-    app.logger.debug(''.join(traceback.format_exception(etype=type(err), value=err, tb=err.__traceback__)))
-    response = {'Message': 'Something went wrong!'}
-    print(response)
+    response = {str(err).split(':')[0]:
+                str(err).split(':')[1].replace('password', 'API Key')}
     return jsonify(response), 401
 
-#  Helper function for API user loader from Key
-@login.request_loader
-def load_user_from_request(request):
-    # Check to see if the request is going to an api end point
-    if request.path in [i.rule for i in app.url_map.iter_rules()
-                        if i.rule.split('/')[1] == 'api']:
-        # Check the payload for an api key
-        if request.args.get('api_key'):
-            # Get api key
-            api_key = request.args.get('api_key')
-            # See if the api is valid
-            user = User.query.filter_by(api_key=api_key).first()
-            # If the user is valid, return the user
-            if user is not None:
-                return user
-            # If not user for key return 401
-            else:
-                print('here')
-                abort(401)
 
-        # If no key provided return 401
-        else:
-            abort(401)
-    # If the request isn't to an api login required and
-    # redirect will pick it up
+@auth.verify_token
+def verify_token(token):
+    user = User.query.filter_by(api_key=token).first()
+    if user is not None:
+        return user
     else:
-        return None
+        raise abort(401)
 
 
 # Helper function, get the user ID for Flask_login

@@ -87,7 +87,8 @@ def index():
             return redirect(url_for('index'))
         # If we pass the error handling more to the predict step
         response = requests.post(url_for('prediction', _external=True),
-                                 data=data, params={'api_key': current_user.api_key})
+                                 headers={'Authorization': 'Bearer ' + current_user.api_key},
+                                 data=data)
         # Convert returned string to a csv
         result = pd.read_csv(io.StringIO(response.text)).to_csv(index=False)
         # flask file send works with either an file location or BytesIO
@@ -118,7 +119,8 @@ def single_predict():
         data = form.csv()
         # Send the csv/form file to the prediction end point
         response = requests.post(url_for('prediction', _external=True),
-                                 data=data, params={'api_key': current_user.api_key})
+                                 headers={'Authorization': 'Bearer ' + current_user.api_key},
+                                 data=data)
         # Parse the results and get the outcome of the prediction of the survived column
         result = pd.read_csv(io.StringIO(response.text))['Survived'][0]
         # Translate the model prediction into plain text

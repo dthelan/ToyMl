@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_httpauth import HTTPTokenAuth
 from flask import jsonify
 
 import werkzeug
@@ -23,6 +24,8 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 # Redirect users to the login route if require login
 login.login_view = 'login'
+
+auth = HTTPTokenAuth(scheme='bearer')
 
 # Add bootstrap to app
 bootstrap = Bootstrap(app)
