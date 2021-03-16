@@ -1,12 +1,18 @@
 from flask import Flask
+from flask.app import setupmethod
+
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask import jsonify
+
+import werkzeug
 
 # Define app as a flask app
 app = Flask(__name__)
+
 # Import the config settings
 app.config.from_object(Config)
 # Add the DB to Flask App
@@ -15,9 +21,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 login = LoginManager(app)
+# Redirect users to the login route if require login
 login.login_view = 'login'
 
-# Add bootstrp to app
+# Add bootstrap to app
 bootstrap = Bootstrap(app)
 
 # Import app components
@@ -25,8 +32,3 @@ bootstrap = Bootstrap(app)
 # the Flask App in memory
 import routes
 import api
-
-
-
-
-

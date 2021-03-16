@@ -3,7 +3,9 @@ from app import login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from flask import abort
+from flask import abort, make_response, jsonify
+import werkzeug
+import traceback
 
 from app import app
 
@@ -59,6 +61,15 @@ class Logs(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
+@app.errorhandler(werkzeug.exceptions.Unauthorized)
+def handle_exception(err):
+    """Return JSON instead of HTML for any other server error"""
+    app.logger.error(f"Unknown Exception: {str(err)}")
+    app.logger.debug(''.join(traceback.format_exception(etype=type(err), value=err, tb=err.__traceback__)))
+    response = {'Message': 'Something went wrong!'}
+    print(response)
+    return jsonify(response), 401
+
 #  Helper function for API user loader from Key
 @login.request_loader
 def load_user_from_request(request):
@@ -76,14 +87,17 @@ def load_user_from_request(request):
                 return user
             # If not user for key return 401
             else:
+                print('here')
                 abort(401)
+
         # If no key provided return 401
         else:
             abort(401)
     # If the request isn't to an api login required and
     # redirect will pick it up
     else:
-        return
+        return None
+
 
 # Helper function, get the user ID for Flask_login
 @login.user_loader
