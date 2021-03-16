@@ -1,5 +1,4 @@
 from flask import Flask
-from flask.app import setupmethod
 
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
@@ -7,9 +6,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_httpauth import HTTPTokenAuth
-from flask import jsonify
 
-import werkzeug
 
 # Define app as a flask app
 app = Flask(__name__)
@@ -21,10 +18,13 @@ db = SQLAlchemy(app)
 # Link the App and DB for migrations
 migrate = Migrate(app, db)
 
+# User Flask-Login for web auth
 login = LoginManager(app)
 # Redirect users to the login route if require login
 login.login_view = 'login'
 
+# Use HTTPAuth for API auth and look for token in
+# the header, the token should begin bearer
 auth = HTTPTokenAuth(scheme='bearer')
 
 # Add bootstrap to app

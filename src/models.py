@@ -62,24 +62,30 @@ class Logs(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
+# Custom error handler to return JSON response if supplied with
+# an incorrect API Key
 @app.errorhandler(401)
 def handle_exception(err):
-    """Return JSON instead of HTML for any other server error"""
     response = {str(err).split(':')[0]:
                 str(err).split(':')[1].replace('password', 'API Key')}
     return jsonify(response), 401
 
 
+# Method for checking a token returns a User object
+# or raise a 401 error
 @auth.verify_token
 def verify_token(token):
+    # Get the token from the header and look it up in DB
     user = User.query.filter_by(api_key=token).first()
+    # If a valid user found return user
     if user is not None:
         return user
+    # If user is None or no Token raise a 401
     else:
         raise abort(401)
 
 
-# Helper function, get the user ID for Flask_login
+# Helper function, used for Web Auth
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
