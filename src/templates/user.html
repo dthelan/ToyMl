@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content %}
+
+<h1>User: {{ user.username }}</h1>
+<br>
+<br>
+<table style="width:70%">
+    <tr>
+    <th class="lead">Current API Key</th>
+    <th style="text-align:right">
+        <input class="btn btn-default" id="button" name="submit" type="submit" value="Copy API to Clipboard">
+    </th>
+  </tr>
+</table>
+<br>
+<h4>
+    <p id="api_key" style="width:70%; word-wrap:break-word;"> {{ user.api_key }}</p>
+</h4>
+<br>
+{{ wtf.quick_form(form) }}
+
+
+{% endblock app_content %}
+
+{% block scripts %}
+<script type="text/javascript">
+  document.getElementById('button').addEventListener('click', function() {
+      const api_key = document.getElementById('api_key').innerHTML;
+      console.log(api_key)
+      navigator.clipboard.writeText(api_key)
+
+  });
+</script>
+
+{% endblock scripts %}

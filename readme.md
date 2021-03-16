@@ -1,6 +1,9 @@
 # ToyMl model and Simple Flask App
 
-Python code that creates a simple titanic model and deploys this in a simple flask app
+Python code that creates a simple titanic model and deploys this in a Flask app
+
+This Flask app uses almost exclusively server side rendering and as 
+such all the functionality is editable from the Python code
 
 ## Installation
 
@@ -22,21 +25,48 @@ python build_model.py -m Basic_RF.joblib -t train.csv
 Here the code is looking in the Data dir
 
 To run the app
+
+* Set the app as the ```FLASK_APP``` environment variable 
 ```bash
-python app.py -m Basic_RF.joblib -p 5001
+export FLASK_APP=app.py
+```
+* Init the Database 
+```bash
+Flask db init
+```
+* Read ```models.py``` for Database tables and create the migration scripts 
+```bash
+Flask db migrate
+```
+* Update the Database from the migrations scripts 
+```bash
+Flask db upgrade
+```
+* Run the Flask app 
+```bash
+Flask run
 ```
 
 ## Using the App
 
-Either go to localhost:5001 and submit data or use the following from the command line
+Either go to localhost:5000 and submit data or use the following from the command line
 
 ```bash
-curl --data-binary "@test.csv" --request POST http://localhost:5001/predict
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" --data-binary "@test.csv" --request POST http://localhost:5000/api/predict
 ```
 
 ## Building a Docker Container
 From the project dir run:
 ```bash
-docker build -t toyml:leastest . && docker run -p 5001:5000 --name ToyML toyml:leastest
+docker build -t toyml:leastest . && docker run -p 5000:5000 --name ToyML toyml:leastest
 ```
 to build and run the newly built container
+
+## Possible Improvements
+
+* Unit tests
+* Flask Blueprints for Auth and Logging
+* YAML Config Files
+* Client Side Functionality (deliberately left out at the moment)
+
+
