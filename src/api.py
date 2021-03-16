@@ -12,7 +12,7 @@ RF = app.config['RF']
 
 
 # Test API
-# curl --request POST http://localhost:5000/api/ping?api_key=api_key
+# curl -H "Authorization: Bearer <ACCESS_TOKEN>" --request POST http://localhost:5000/api/ping
 @app.route('/api/ping')
 @auth.login_required
 def ping():
@@ -21,7 +21,7 @@ def ping():
 
 # Create the Model Predict Endpoint
 # Use a command like
-# curl --data-binary "@test.csv" --request POST http://localhost:5000/api/predict?api_key=api_key
+# curl -H "Authorization: Bearer <ACCESS_TOKEN>" --data-binary "@test.csv" --request POST http://localhost:5000/api/predict
 @app.route('/api/predict', methods=['GET', 'POST'])
 @auth.login_required
 def prediction():

@@ -52,7 +52,7 @@ Flask run
 Either go to localhost:5000 and submit data or use the following from the command line
 
 ```bash
-curl --data-binary "@test.csv" --request POST http://localhost:5000/api/predict?api_key=api_key
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" --data-binary "@test.csv" --request POST http://localhost:5000/api/predict
 ```
 
 ## Building a Docker Container
