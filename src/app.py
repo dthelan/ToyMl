@@ -35,3 +35,4 @@ bootstrap = Bootstrap(app)
 # the Flask App in memory
 import routes
 import api
+import dash_app
