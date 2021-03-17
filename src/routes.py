@@ -19,8 +19,10 @@ from models import User, Logs
 from plotly.offline import plot
 from plotly.graph_objs import Scatter
 import plotly.express as px
+from bs4 import BeautifulSoup
 
 from flask import Markup
+
 
 # Event Logger, get the status after a request is triggered
 @app.after_request
@@ -139,12 +141,21 @@ def single_predict():
     return render_template('new_prediction.html', form=form)
 
 
+from dash_app import dashapp
+
+
 # Creates an endpoint for login
-@app.route('/app', methods=['GET', 'POST'])
+@app.route('/app/', methods=['GET', 'POST'])
 def dash_app():
+    soup = BeautifulSoup(dashapp.index(), 'html.parser')
+    footer = soup.footer
+    print(dashapp.interpolate_index())
     fig = plot([Scatter(x=[1, 2, 3], y=[3, 1, 6])], output_type='div')
     fig2 = px.scatter(x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16]).to_html(full_html=False)
-    return render_template('dash.html', plot1=Markup(fig),plot2=Markup(fig2))
+    return render_template('dash.html',
+                           plot1=Markup(fig),
+                           plot2=Markup(fig2),
+                           footer=footer)
 
 
 # Creates an endpoint for login
