@@ -9,4 +9,8 @@ WORKDIR src
 
 RUN python build_model.py -t train.csv -m Basic_RF.joblib
 
-CMD python app.py -m Basic_RF.joblib
+RUN flask db init
+RUN flask db migrate -m "Initial migration."
+RUN flask db upgrade
+
+CMD flask run --host=0.0.0.0
