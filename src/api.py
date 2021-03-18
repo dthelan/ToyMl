@@ -20,7 +20,9 @@ def ping():
 
 # Create the Model Predict Endpoint
 # Use a command like
-# curl -H "Authorization: Bearer <ACCESS_TOKEN>" --data-binary "@test.csv" --request POST http://localhost:5000/api/predict
+# curl -H "Authorization: Bearer <ACCESS_TOKEN>"
+#      --data-binary "@test.csv"
+#      --request POST http://localhost:5000/api/predict
 @app.route('/api/predict', methods=['GET', 'POST'])
 @auth.login_required
 def prediction():

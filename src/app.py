@@ -1,3 +1,6 @@
+import gevent.monkey
+gevent.monkey.patch_all()
+
 from flask import Flask
 
 from config import Config
@@ -6,6 +9,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_httpauth import HTTPTokenAuth
+from flask_socketio import SocketIO, emit
+
 
 
 # Define app as a flask app
@@ -30,8 +35,15 @@ auth = HTTPTokenAuth(scheme='bearer')
 # Add bootstrap to app
 bootstrap = Bootstrap(app)
 
+socketio = SocketIO(app)
+
 # Import app components
 # This import need to be here as they require
 # the Flask App in memory
-import routes
-import api
+from routes import *
+from api import *
+from sockets import *
+
+
+if __name__ == '__main__':
+    socketio.run(app)

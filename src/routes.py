@@ -117,6 +117,7 @@ def single_predict():
     if form.validate_on_submit():
         # Use form method to turn get the form as a csv
         data = form.csv()
+        # print(url_for('prediction', _external=True))
         # Send the csv/form file to the prediction end point
         response = requests.post(url_for('prediction', _external=True),
                                  headers={'Authorization': 'Bearer ' + current_user.api_key},
@@ -132,6 +133,11 @@ def single_predict():
         return render_template('new_prediction.html', form=form, value=outcome)
     # Render the page with the prediction form
     return render_template('new_prediction.html', form=form)
+
+
+@app.route('/sockets')
+def sockets():
+    return render_template('sockets.html')
 
 
 # Creates an endpoint for login

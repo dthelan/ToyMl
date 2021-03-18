@@ -21,6 +21,8 @@ ToyML
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('index') }}">Upload File</a></li>
                     <li><a href="{{ url_for('single_predict') }}">Single Prediction</a></li>
+                    <li><a href="{{ url_for('sockets') }}">Sockets Test</a></li>
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
