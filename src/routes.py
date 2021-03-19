@@ -21,6 +21,7 @@ from models import User, Logs
 @app.after_request
 # After request requires a response object
 def after_request(response):
+    print(request, response.status)
     # Do not log favicon
     if request.path != '/favicon.ico':
         # If user is logged in get user ID
@@ -136,8 +137,9 @@ def single_predict():
 
 
 @app.route('/sockets')
+@login_required
 def sockets():
-    return render_template('sockets.html')
+    return render_template('sockets.html', user=current_user)
 
 
 # Creates an endpoint for login
