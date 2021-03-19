@@ -7,6 +7,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <meta id="user" data-username='{{user.username}}'>
+<meta id="files" data-files={{files}}>
+
 {% endblock head %}
 
 
@@ -22,6 +24,7 @@
                   <input type="text" class="message" placeholder="Messages"/>
                   <input type="submit"/>
             </form>
+            {{files}}
         </div>
     </div>
 </div>
@@ -37,19 +40,19 @@
     socket.on( 'connect', function() {
         socket.emit( 'my event', {
         data: 'User Connected'
-        } )
-        var form = $( 'form' ).on( 'submit', function( e ) {
-          e.preventDefault()
-          // let user_name = $( 'input.username' ).val()
-          let user_input = $( 'input.message' ).val()
-          socket.emit( 'my event', {
-            user_name : user,
-            message : user_input
-          } )
-          $( 'input.message' ).val( '' ).focus()
-        } )
+        } )       } )
+
+    var form = $( 'form' ).on( 'submit', function( e ) {
+      e.preventDefault()
+      // let user_name = $( 'input.username' ).val()
+      let user_input = $( 'input.message' ).val()
+      socket.emit( 'Chat message', {
+        user_name : user,
+        message : user_input
       } )
-      socket.on( 'my response', function( msg ) {
+      $( 'input.message' ).val( '' ).focus()
+    } )
+      socket.on( 'Chat Reply', function( msg ) {
         console.log( msg )
         if( typeof msg.user_name !== 'undefined' ) {
           $( 'h3' ).remove()

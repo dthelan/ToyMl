@@ -4,7 +4,7 @@ from datetime import datetime
 import jwt
 import pandas as pd
 import requests
-from flask import render_template, flash, redirect, url_for, request, send_file
+from flask import render_template, flash, redirect, url_for, request, send_file, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 
 from app import app
@@ -15,6 +15,9 @@ from forms import LoginForm
 from forms import PredictForm
 from forms import RegistrationForm
 from models import User, Logs
+
+import glob
+import json
 
 
 # Event Logger, get the status after a request is triggered
@@ -136,10 +139,16 @@ def single_predict():
     return render_template('new_prediction.html', form=form)
 
 
+@app.route('/socketchat')
+@login_required
+def socketchat():
+    return render_template('socketchat.html', user=current_user)
+
+
 @app.route('/sockets')
 @login_required
 def sockets():
-    return render_template('sockets.html', user=current_user)
+    return render_template('socket.html', user=current_user)
 
 
 # Creates an endpoint for login
