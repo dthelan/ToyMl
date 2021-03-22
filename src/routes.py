@@ -145,12 +145,6 @@ def socketchat():
     return render_template('socketchat.html', user=current_user)
 
 
-@app.route('/sockets')
-@login_required
-def sockets():
-    return render_template('socket.html', user=current_user)
-
-
 # Creates an endpoint for login
 @app.route('/login', methods=['GET', 'POST'])
 def login():

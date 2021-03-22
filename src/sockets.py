@@ -3,6 +3,7 @@ from flask_login import current_user
 
 from app import socketio
 
+
 # Dummy callback function
 def messageReceived(methods=['GET', 'POST']):
     # Callback get the same args as the parent function
